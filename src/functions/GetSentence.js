@@ -7,6 +7,23 @@ function getRandomElement(arr) {
             return arr[randomIndex];
 }
 
+function extractTextsByKey(object, key, result = []) {
+    if (typeof object === "object" && object !== null) {
+      if (object.hasOwnProperty(key)) {
+        result.push(object[key]);
+      }
+      for (const prop in object) {
+        if (
+          object.hasOwnProperty(prop) &&
+          typeof object[prop] === "object"
+        ) {
+          extractTextsByKey(object[prop], key, result);
+        }
+      }
+    }
+    return result;
+  }
+
 app.http('GetSentence', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
@@ -22,7 +39,7 @@ app.http('GetSentence', {
             };
             return;
         }
-
+    
         const url = `https://sentence.yourdictionary.com/${word}`;
         try {
             const response = await fetch(url);
@@ -39,10 +56,23 @@ app.http('GetSentence', {
                     body: getRandomElement(sentences)
                 };
             } else {
-                return {
-                    status: 500,
-                    body: "Failed to fetch example sentences"
-                };
+                const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=84ffb629-a7c3-4512-9c3c-a520c79ded19`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    const json = await response.text();
+                    const sentences = extractTextsByKey(JSON.parse(json), "t");
+                    return  {
+                        status: 200,
+                        body: getRandomElement(sentences)
+                    };
+
+                }
+                else {
+                    return {
+                        status: 500,
+                        body: "Failed to fetch example sentences"
+                    };
+                }
             }
         } catch (error) {
             context.log('Error:', error);
