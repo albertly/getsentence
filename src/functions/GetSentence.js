@@ -4,7 +4,7 @@ const { app } = require('@azure/functions');
 
 function getRandomElement(arr) {
             const randomIndex = Math.floor(Math.random() * arr.length);
-            return arr[randomIndex];
+            return arr[randomIndex].replace(/\{[^}]*\}/g, '');
 }
 
 function extractTextsByKey(object, key, result = []) {
