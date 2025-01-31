@@ -8,8 +8,8 @@ app.http('GetSentence', {
     handler: async (request, context) => {
         context.log(`Http function processed request for url "${request.url}"`);
 
-        //const name = request.query.get('name') || await request.text() || 'world';
-        const word = req.query.word || (req.body && req.body.word);
+        const word = request.query.get('word') || await request.text() || 'world';
+       // const word = req.query.word || (req.body && req.body.word);
         if (!word) {
             context.res = {
                 status: 400,
