@@ -48,13 +48,3 @@ app.http('GetSentence', {
         }      
     }
 });
-
-
-
-
-
-module.exports = async function (context, req) {
-
-
-
-};
