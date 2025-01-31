@@ -2,6 +2,11 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const { app } = require('@azure/functions');
 
+function getRandomElement(arr) {
+            const randomIndex = Math.floor(Math.random() * arr.length);
+            return arr[randomIndex];
+}
+
 app.http('GetSentence', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
@@ -31,7 +36,7 @@ app.http('GetSentence', {
                 console.log(sentences);
                 return  {
                     status: 200,
-                    body: sentences
+                    body: getRandomElement(sentences)
                 };
             } else {
                 return {
