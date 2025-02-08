@@ -7,10 +7,13 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/functions": "^4.0.0",
-    "node-fetch": "^2.6.1",
-    "cheerio": "^1.0.0-rc.10"
+    "cheerio": "^1.0.0",
+    "node-fetch": "^2.7.0",
+    "@azure/functions": "^4.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "cheerio": "^1.0.0",
+    "node-fetch": "^2.7.0"
+  },
   "main": "src/{index.js,functions/*.js}"
 }
