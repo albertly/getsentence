@@ -4,7 +4,7 @@ const { app } = require('@azure/functions');
 
 function getRandomElement(arr) {
             const randomIndex = Math.floor(Math.random() * arr.length);
-            return arr[randomIndex].replace(/\{[^}]*\}/g, '');
+            return arr[randomIndex];
 }
 
 function extractTextsByKey(object, key, result = []) {
@@ -13,10 +13,7 @@ function extractTextsByKey(object, key, result = []) {
         result.push(object[key]);
       }
       for (const prop in object) {
-        if (
-          object.hasOwnProperty(prop) &&
-          typeof object[prop] === "object"
-        ) {
+        if (object.hasOwnProperty(prop) && typeof object[prop] === "object") {
           extractTextsByKey(object[prop], key, result);
         }
       }
@@ -28,20 +25,17 @@ app.http('GetSentence', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-        context.log(`Http function processed request for url "${request.url}"`);
 
-        const word = request.query.get('word') || await request.text() || 'world';
-       // const word = req.query.word || (req.body && req.body.word);
+        const word = request.query.get('word') || await request.text();
         if (!word) {
-            context.res = {
+            return {
                 status: 400,
                 body: "Please provide a word"
             };
-            return;
         }
-    
-        const url = `https://sentence.yourdictionary.com/${word}`;
+           
         try {
+            const url = `https://sentence.yourdictionary.com/${word}`;
             const response = await fetch(url);
             if (response.ok) {
                 const html = await response.text();
@@ -50,7 +44,6 @@ app.http('GetSentence', {
                 $('p.sentence-item__text').each((index, element) => {
                     sentences.push($(element).text());
                 });
-                console.log(sentences);
                 return  {
                     status: 200,
                     body: getRandomElement(sentences)
@@ -63,9 +56,8 @@ app.http('GetSentence', {
                     const sentences = extractTextsByKey(JSON.parse(json), "t");
                     return  {
                         status: 200,
-                        body: getRandomElement(sentences)
+                        body: getRandomElement(sentences).replace(/\{[^}]*\}/g, '')
                     };
-
                 }
                 else {
                     return {
